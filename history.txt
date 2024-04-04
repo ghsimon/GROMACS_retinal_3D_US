@@ -1,0 +1,22 @@
+# Generate starting configurations at equidistant points of dihedral angle phi starting from metadynamics trajectory for sigma005
+mkdir conf
+python get_confs.py   # read metadynamics trajectory and pick configurations of equidistant phi
+bash conf_convert.sh  # convert from .xtc to .gro
+
+# generate plumed input files
+mkdir plumed_input
+python write_plumed_files.py
+
+# generate run.sh files: each run.sh file carries out equilibration and production run for ONE trajectory, i.e. at one three-dimensional restraint
+mkdir run_input
+python write_run_files.py
+
+# generate mult.sh files: each mult.sh file starts 4 run.sh files which have to be run sequentially 
+mkdir mult
+python write_mult_files.py
+
+# run all trajectories
+bash combine_mult1.sh
+bash combine_mult2.sh
+bash combine_mult3.sh
+bash combine_mult4.sh
